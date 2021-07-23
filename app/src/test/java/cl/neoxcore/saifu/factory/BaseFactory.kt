@@ -1,4 +1,4 @@
-package cl.neoxcore.saifu
+package cl.neoxcore.saifu.factory
 
 import java.util.UUID
 

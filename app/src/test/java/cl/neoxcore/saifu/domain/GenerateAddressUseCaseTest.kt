@@ -1,6 +1,6 @@
 package cl.neoxcore.saifu.domain
 
-import cl.neoxcore.saifu.BaseFactory
+import cl.neoxcore.saifu.factory.BaseFactory
 import cl.neoxcore.saifu.domain.repository.Repository
 import io.mockk.coEvery
 import io.mockk.coVerify
