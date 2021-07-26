@@ -42,13 +42,18 @@ dependencies {
     implementation "com.google.dagger:dagger:$daggerVersion"
     implementation "com.google.dagger:dagger-android:$daggerVersion"
     implementation "com.google.dagger:dagger-android-support:$daggerVersion"
+    implementation "androidx.datastore:datastore-preferences:$datastoreVersion"
     implementation "com.google.code.gson:gson:$gsonVersion"
     implementation "com.google.android.material:material:$materialVersion"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
+    implementation "androidx.room:room-runtime:$roomVersion"
 
     testImplementation "junit:junit:$junitVersion"
     testImplementation "io.mockk:mockk:1.11.0"
+    testImplementation "androidx.room:room-testing:$roomVersion"
+
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation "androidx.test.espresso:espresso-core:$espressoCoreVersion"

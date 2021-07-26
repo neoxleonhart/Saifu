@@ -1,6 +1,7 @@
 package cl.neoxcore.saifu.data
 
 import cl.neoxcore.saifu.data.remote.model.RemoteAddress
+import cl.neoxcore.saifu.data.source.Cache
 import cl.neoxcore.saifu.data.source.Remote
 import cl.neoxcore.saifu.factory.AddressFactory.makeRemoteAddress
 import io.mockk.coEvery
@@ -12,7 +13,8 @@ import org.junit.Test
 
 class RepositoryImplTest {
     private val remote = mockk<Remote>()
-    private val repository = RepositoryImpl(remote)
+    private val cache = mockk<Cache>()
+    private val repository = RepositoryImpl(remote, cache)
 
     @Test
     fun `given RemoteAddress, when generateAddress, then return data`() = runBlocking {
