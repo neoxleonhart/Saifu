@@ -4,4 +4,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface Repository {
     fun generateAddress(): Flow<String>
+    suspend fun saveAddress(address: String)
 }
