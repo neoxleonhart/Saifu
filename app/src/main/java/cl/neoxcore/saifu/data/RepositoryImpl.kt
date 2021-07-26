@@ -12,4 +12,8 @@ class RepositoryImpl @Inject constructor(private val remote: Remote, private val
         val address = remote.generateAddress().address.orEmpty()
         emit(address)
     }
+
+    override suspend fun saveAddress(address: String) {
+        cache.storeCacheAddress(address)
+    }
 }
