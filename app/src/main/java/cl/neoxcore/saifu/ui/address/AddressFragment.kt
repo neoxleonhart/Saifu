@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -14,10 +15,12 @@ import cl.neoxcore.saifu.databinding.FragmentAddressBinding
 import cl.neoxcore.saifu.presentation.AddressViewModel
 import cl.neoxcore.saifu.presentation.address.AddressUIntent
 import cl.neoxcore.saifu.presentation.address.AddressUIntent.GenerateNewAddressUIntent
+import cl.neoxcore.saifu.presentation.address.AddressUIntent.SaveAddressUIntent
 import cl.neoxcore.saifu.presentation.address.AddressUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.DefaultUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.DisplayAddressUiState
-import cl.neoxcore.saifu.presentation.address.AddressUiState.ErrorUiState
+import cl.neoxcore.saifu.presentation.address.AddressUiState.ErrorGenerateUiState
+import cl.neoxcore.saifu.presentation.address.AddressUiState.ErrorSaveUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.LoadingUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.SaveUiState
 import cl.neoxcore.saifu.presentation.mvi.MviUi
@@ -70,6 +73,11 @@ class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
                     userIntents.emit(GenerateNewAddressUIntent)
                 }
             }
+            saveAddressButton.setOnClickListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    userIntents.emit(SaveAddressUIntent(addressText.text.toString()))
+                }
+            }
         }
     }
 
@@ -86,14 +94,15 @@ class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
         when (uiState) {
             DefaultUiState -> showNoAddress()
             is DisplayAddressUiState -> showAddress(uiState.address)
-            is ErrorUiState -> showError(uiState.error)
+            is ErrorGenerateUiState -> showGenerateError(uiState.error)
+            is ErrorSaveUiState -> showSaveError(uiState.error)
             LoadingUiState -> showLoading()
             SaveUiState -> goToNextScreen()
         }
     }
 
     private fun goToNextScreen() {
-        TODO("Not yet implemented")
+        Toast.makeText(context, "nueva pantalla", Toast.LENGTH_SHORT).show()
     }
 
     private fun showLoading() {
@@ -102,16 +111,34 @@ class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
         }
     }
 
-    private fun showError(error: Throwable) {
+    private fun showGenerateError(error: Throwable) {
+        binding?.apply {
+            saveAddressButton.isEnabled = addressText.text.toString().isNotEmpty()
+            loadingView.visibility = View.GONE
+            Snackbar.make(
+                contentView,
+                "Error: ${error.localizedMessage}",
+                Snackbar.LENGTH_INDEFINITE
+            ).setAction(R.string.retry) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                        userIntents.emit(GenerateNewAddressUIntent)
+                }
+            }.show()
+        }
+    }
+
+    private fun showSaveError(error: Throwable) {
         binding?.apply {
             loadingView.visibility = View.GONE
-            Snackbar.make(contentView, "Error: ${error.localizedMessage}", Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.retry) {
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        userIntents.emit(GenerateNewAddressUIntent)
-                    }
+            Snackbar.make(
+                contentView,
+                "Error: ${error.localizedMessage}",
+                Snackbar.LENGTH_INDEFINITE
+            ).setAction(R.string.retry) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                        userIntents.emit(SaveAddressUIntent(addressText.text.toString()))
                 }
-                .show()
+            }.show()
         }
     }
 

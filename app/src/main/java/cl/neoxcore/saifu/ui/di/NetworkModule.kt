@@ -22,7 +22,7 @@ class NetworkModule {
     fun provideRetrofit(client: OkHttpClient): Retrofit {
         return Builder()
             .client(client)
-            .baseUrl("https://api.blockcypher.com/v1/btc/test4/")
+            .baseUrl("https://api.blockcypher.com/v1/btc/test3/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
