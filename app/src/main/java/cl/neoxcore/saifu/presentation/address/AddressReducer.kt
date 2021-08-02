@@ -4,7 +4,8 @@ import cl.neoxcore.saifu.presentation.address.AddressResult.GenerateAddressResul
 import cl.neoxcore.saifu.presentation.address.AddressResult.SaveAddressResult
 import cl.neoxcore.saifu.presentation.address.AddressUiState.DefaultUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.DisplayAddressUiState
-import cl.neoxcore.saifu.presentation.address.AddressUiState.ErrorUiState
+import cl.neoxcore.saifu.presentation.address.AddressUiState.ErrorGenerateUiState
+import cl.neoxcore.saifu.presentation.address.AddressUiState.ErrorSaveUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.LoadingUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.SaveUiState
 import cl.neoxcore.saifu.presentation.mvi.MviReducer
@@ -17,8 +18,9 @@ class AddressReducer @Inject constructor() : MviReducer<AddressUiState, AddressR
             is DefaultUiState -> previousState reduceWith result
             is DisplayAddressUiState -> previousState reduceWith result
             is LoadingUiState -> previousState reduceWith result
-            is ErrorUiState -> previousState reduceWith result
+            is ErrorGenerateUiState -> previousState reduceWith result
             is SaveUiState -> previousState reduceWith result
+            is ErrorSaveUiState -> previousState reduceWith result
         }
     }
 
@@ -34,18 +36,24 @@ class AddressReducer @Inject constructor() : MviReducer<AddressUiState, AddressR
         return when (result) {
             is GenerateAddressResult.Success -> DisplayAddressUiState(result.address)
             is SaveAddressResult.Success -> SaveUiState
-            is GenerateAddressResult.Error -> ErrorUiState(result.error)
-            is SaveAddressResult.Error -> ErrorUiState(result.error)
+            is GenerateAddressResult.Error -> ErrorGenerateUiState(result.error)
+            is SaveAddressResult.Error -> ErrorSaveUiState(result.error)
             else -> throw UnsupportedReduceException(this, result)
         }
     }
 
-    private infix fun ErrorUiState.reduceWith(result: AddressResult): AddressUiState {
+    private infix fun ErrorGenerateUiState.reduceWith(result: AddressResult): AddressUiState {
         return when (result) {
             is GenerateAddressResult.InProgress -> LoadingUiState
+            is GenerateAddressResult.Error -> ErrorGenerateUiState(result.error)
+            else -> throw UnsupportedReduceException(this, result)
+        }
+    }
+
+    private infix fun ErrorSaveUiState.reduceWith(result: AddressResult): AddressUiState {
+        return when (result) {
             is SaveAddressResult.InProgress -> LoadingUiState
-            is GenerateAddressResult.Error -> ErrorUiState(result.error)
-            is SaveAddressResult.Error -> ErrorUiState(result.error)
+            is SaveAddressResult.Error -> ErrorSaveUiState(result.error)
             else -> throw UnsupportedReduceException(this, result)
         }
     }
@@ -54,8 +62,8 @@ class AddressReducer @Inject constructor() : MviReducer<AddressUiState, AddressR
         return when (result) {
             is GenerateAddressResult.InProgress -> LoadingUiState
             is SaveAddressResult.InProgress -> LoadingUiState
-            is GenerateAddressResult.Error -> ErrorUiState(result.error)
-            is SaveAddressResult.Error -> ErrorUiState(result.error)
+            is GenerateAddressResult.Error -> ErrorGenerateUiState(result.error)
+            is SaveAddressResult.Error -> ErrorSaveUiState(result.error)
             else -> throw UnsupportedReduceException(this, result)
         }
     }

@@ -5,7 +5,8 @@ import cl.neoxcore.saifu.presentation.address.AddressResult.GenerateAddressResul
 import cl.neoxcore.saifu.presentation.address.AddressResult.SaveAddressResult
 import cl.neoxcore.saifu.presentation.address.AddressUiState.DefaultUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.DisplayAddressUiState
-import cl.neoxcore.saifu.presentation.address.AddressUiState.ErrorUiState
+import cl.neoxcore.saifu.presentation.address.AddressUiState.ErrorGenerateUiState
+import cl.neoxcore.saifu.presentation.address.AddressUiState.ErrorSaveUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.LoadingUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.SaveUiState
 import cl.neoxcore.saifu.presentation.mvi.UnsupportedReduceException
@@ -63,23 +64,23 @@ class AddressReducerTest {
     }
 
     @Test
-    fun `given LoadingUiState with GenerateAddress-Error, when reduceWith, then returns ErrorUiState`() {
+    fun `given LoadingUiState with GenerateAddress-Error, when reduceWith, then returns ErrorGenerateUiState`() {
         val previousUiState = LoadingUiState
         val result = GenerateAddressResult.Error(Throwable("error"))
 
         val newUiState = with(reducer) { previousUiState reduceWith result }
 
-        assert(newUiState is ErrorUiState)
+        assert(newUiState is ErrorGenerateUiState)
     }
 
     @Test
-    fun `given LoadingUiState with SaveAddressResult-Error, when reduceWith, then returns ErrorUiState`() {
+    fun `given LoadingUiState with SaveAddressResult-Error, when reduceWith, then returns ErrorSaveUiState`() {
         val previousUiState = LoadingUiState
         val result = SaveAddressResult.Error(Throwable("error"))
 
         val newUiState = with(reducer) { previousUiState reduceWith result }
 
-        assert(newUiState is ErrorUiState)
+        assert(newUiState is ErrorSaveUiState)
     }
 
     @Test(expected = UnsupportedReduceException::class)
@@ -91,8 +92,8 @@ class AddressReducerTest {
     }
 
     @Test
-    fun `given ErrorUiState with GenerateAddress-InProgress, when reduceWith, then returns LoadingUiState`() {
-        val previousUiState = ErrorUiState(Throwable())
+    fun `given ErrorGenerateUiState with GenerateAddress-InProgress, when reduceWith, then returns LoadingUiState`() {
+        val previousUiState = ErrorGenerateUiState(Throwable())
         val result = GenerateAddressResult.InProgress
 
         val newUiState = with(reducer) { previousUiState reduceWith result }
@@ -101,8 +102,8 @@ class AddressReducerTest {
     }
 
     @Test
-    fun `given ErrorUiState with SaveAddressResult-InProgress, when reduceWith, then returns LoadingUiState`() {
-        val previousUiState = ErrorUiState(Throwable())
+    fun `given ErrorSaveUiState with SaveAddressResult-InProgress, when reduceWith, then returns LoadingUiState`() {
+        val previousUiState = ErrorSaveUiState(Throwable())
         val result = SaveAddressResult.InProgress
 
         val newUiState = with(reducer) { previousUiState reduceWith result }
@@ -111,28 +112,28 @@ class AddressReducerTest {
     }
 
     @Test
-    fun `given ErrorUiState with GenerateAddress-Error, when reduceWith, then returns ErrorUiState`() {
-        val previousUiState = ErrorUiState(Throwable())
+    fun `given ErrorGenerateUiState with GenerateAddress-Error, when reduceWith, then returns ErrorGenerateUiState`() {
+        val previousUiState = ErrorGenerateUiState(Throwable())
         val result = GenerateAddressResult.Error(Throwable("error"))
 
         val newUiState = with(reducer) { previousUiState reduceWith result }
 
-        assert(newUiState is ErrorUiState)
+        assert(newUiState is ErrorGenerateUiState)
     }
 
     @Test
-    fun `given ErrorUiState with SaveAddressResult-Error, when reduceWith, then returns ErrorUiState`() {
-        val previousUiState = ErrorUiState(Throwable())
+    fun `given ErrorSaveUiState with SaveAddressResult-Error, when reduceWith, then returns ErrorSaveUiState`() {
+        val previousUiState = ErrorSaveUiState(Throwable())
         val result = SaveAddressResult.Error(Throwable("error"))
 
         val newUiState = with(reducer) { previousUiState reduceWith result }
 
-        assert(newUiState is ErrorUiState)
+        assert(newUiState is ErrorSaveUiState)
     }
 
     @Test(expected = UnsupportedReduceException::class)
     fun `given ErrorUiState with SaveAddressResult-InProgress, when reduceWith, then throw Exception`() {
-        val previousUiState = ErrorUiState(Throwable())
+        val previousUiState = ErrorGenerateUiState(Throwable())
         val result = SaveAddressResult.Success
 
         with(reducer) { previousUiState reduceWith result }
@@ -159,23 +160,23 @@ class AddressReducerTest {
     }
 
     @Test
-    fun `given DisplayAddressUiState with GenerateAddress-Error, when reduceWith, then returns ErrorUiState`() {
+    fun `given DisplayAddressUiState with GenerateAddress-Error, when reduceWith, then returns ErrorGenerateUiState`() {
         val previousUiState = DisplayAddressUiState(randomString())
         val result = GenerateAddressResult.Error(Throwable("error"))
 
         val newUiState = with(reducer) { previousUiState reduceWith result }
 
-        assert(newUiState is ErrorUiState)
+        assert(newUiState is ErrorGenerateUiState)
     }
 
     @Test
-    fun `given DisplayAddressUiState with SaveAddressResult-Error, when reduceWith, then returns ErrorUiState`() {
+    fun `given DisplayAddressUiState with SaveAddressResult-Error, when reduceWith, then returns ErrorSaveUiState`() {
         val previousUiState = DisplayAddressUiState(randomString())
         val result = SaveAddressResult.Error(Throwable("error"))
 
         val newUiState = with(reducer) { previousUiState reduceWith result }
 
-        assert(newUiState is ErrorUiState)
+        assert(newUiState is ErrorSaveUiState)
     }
 
     @Test(expected = UnsupportedReduceException::class)
