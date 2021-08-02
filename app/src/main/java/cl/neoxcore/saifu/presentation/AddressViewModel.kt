@@ -12,6 +12,7 @@ import cl.neoxcore.saifu.presentation.address.AddressUIntent.SaveAddressUIntent
 import cl.neoxcore.saifu.presentation.address.AddressUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.DefaultUiState
 import cl.neoxcore.saifu.presentation.mvi.MviPresentation
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +23,7 @@ import javax.inject.Inject
 
 @FlowPreview
 @ExperimentalCoroutinesApi
+@HiltViewModel
 class AddressViewModel @Inject constructor(
     private val reducer: AddressReducer,
     private val processor: AddressProcessor

@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import cl.neoxcore.saifu.databinding.FragmentAddressBinding
 import cl.neoxcore.saifu.presentation.AddressViewModel
@@ -22,6 +21,7 @@ import cl.neoxcore.saifu.presentation.address.AddressUiState.SaveUiState
 import cl.neoxcore.saifu.presentation.mvi.MviUi
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -29,22 +29,19 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @FlowPreview
+@AndroidEntryPoint
 class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
     private var binding: FragmentAddressBinding? = null
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel by viewModels<AddressViewModel>()
 
-    private val viewModel: AddressViewModel by viewModels { viewModelFactory }
     private val userIntents: MutableSharedFlow<AddressUIntent> = MutableSharedFlow()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupInjection()
         subscribeToProcessIntentsAndObserveStates()
     }
 
@@ -58,10 +55,6 @@ class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
             binding = FragmentAddressBinding.inflate(inflater, container, false)
         }
         return binding?.root
-    }
-
-    private fun setupInjection() {
-        TODO()
     }
 
     private fun subscribeToProcessIntentsAndObserveStates() {
