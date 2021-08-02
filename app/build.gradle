@@ -30,6 +30,8 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    viewBinding.enabled = true
 }
 
 dependencies {
@@ -43,15 +45,22 @@ dependencies {
     implementation "com.google.dagger:dagger-android:$daggerVersion"
     implementation "com.google.dagger:dagger-android-support:$daggerVersion"
     implementation "androidx.datastore:datastore-preferences:$datastoreVersion"
+    implementation "androidx.fragment:fragment-ktx:$fragmentVersion"
     implementation "com.google.code.gson:gson:$gsonVersion"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
     implementation "com.google.android.material:material:$materialVersion"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
     implementation "androidx.room:room-runtime:$roomVersion"
+    implementation "com.google.zxing:core:$zxingVersion"
 
     testImplementation "junit:junit:$junitVersion"
-    testImplementation "io.mockk:mockk:1.11.0"
+    testImplementation "io.mockk:mockk:$mockkVersion"
     testImplementation "androidx.room:room-testing:$roomVersion"
 
 

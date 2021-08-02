@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Saifu</string>
+    <string name="address_title">Address</string>
+    <string name="generate_address_btn">Generar nueva address</string>
+    <string name="save_btn">Guardar y continuar</string>
+    <string name="qr_code">Código QR</string>
 </resources>
