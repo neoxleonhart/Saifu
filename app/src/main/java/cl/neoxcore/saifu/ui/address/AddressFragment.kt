@@ -9,9 +9,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import cl.neoxcore.saifu.R
 import cl.neoxcore.saifu.databinding.FragmentAddressBinding
 import cl.neoxcore.saifu.presentation.AddressViewModel
 import cl.neoxcore.saifu.presentation.address.AddressUIntent
+import cl.neoxcore.saifu.presentation.address.AddressUIntent.GenerateNewAddressUIntent
 import cl.neoxcore.saifu.presentation.address.AddressUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.DefaultUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.DisplayAddressUiState
@@ -19,6 +21,7 @@ import cl.neoxcore.saifu.presentation.address.AddressUiState.ErrorUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.LoadingUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.SaveUiState
 import cl.neoxcore.saifu.presentation.mvi.MviUi
+import com.google.android.material.snackbar.Snackbar
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,10 +32,12 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
 @FlowPreview
 @AndroidEntryPoint
+@Suppress("TooManyFunctions")
 class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
     private var binding: FragmentAddressBinding? = null
 
@@ -55,6 +60,17 @@ class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
             binding = FragmentAddressBinding.inflate(inflater, container, false)
         }
         return binding?.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding?.apply {
+            generateAddressButton.setOnClickListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    userIntents.emit(GenerateNewAddressUIntent)
+                }
+            }
+        }
     }
 
     private fun subscribeToProcessIntentsAndObserveStates() {
@@ -89,6 +105,13 @@ class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
     private fun showError(error: Throwable) {
         binding?.apply {
             loadingView.visibility = View.GONE
+            Snackbar.make(contentView, "Error: ${error.localizedMessage}", Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.retry) {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        userIntents.emit(GenerateNewAddressUIntent)
+                    }
+                }
+                .show()
         }
     }
 
@@ -97,6 +120,7 @@ class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
             loadingView.visibility = View.GONE
             addressText.text = address
             addressImage.setImageBitmap(generateQr(address))
+            saveAddressButton.isEnabled = true
         }
     }
 
