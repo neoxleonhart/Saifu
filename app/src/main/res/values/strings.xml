@@ -15,5 +15,6 @@
     <string name="cancel">Cancelar</string>
     <string name="transaction_btn">Ver transacciones</string>
     <string name="server_error">Error al conectar al servidor</string>
+    <string name="no_transactions">No hay transacciones que mostrar</string>
 
 </resources>

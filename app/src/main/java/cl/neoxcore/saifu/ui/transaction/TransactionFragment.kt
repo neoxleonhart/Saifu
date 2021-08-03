@@ -120,6 +120,7 @@ internal class TransactionFragment : Fragment(), MviUi<TransactionUIntent, Trans
 
     private fun showTransactions(transactions: List<UiTransaction>) {
         adapter.addTransactions(transactions)
+        binding?.noDataText?.isVisible = transactions.isEmpty()
         viewLifecycleOwner.lifecycleScope.launch {
             delay(Constants.DELAY_TIME)
             userIntents.emit(LoadTransactionUIntent)
@@ -130,6 +131,7 @@ internal class TransactionFragment : Fragment(), MviUi<TransactionUIntent, Trans
     private fun showErrorWithTransactions(transactions: List<UiTransaction>) {
         adapter.addTransactions(transactions)
         binding?.apply {
+            noDataText.isVisible = transactions.isEmpty()
             Snackbar.make(
                 contentView,
                 getString(string.error_update),
