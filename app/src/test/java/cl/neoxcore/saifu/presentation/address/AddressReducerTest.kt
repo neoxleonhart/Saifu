@@ -2,11 +2,13 @@ package cl.neoxcore.saifu.presentation.address
 
 import cl.neoxcore.saifu.factory.BaseFactory.randomString
 import cl.neoxcore.saifu.presentation.address.AddressResult.GenerateAddressResult
+import cl.neoxcore.saifu.presentation.address.AddressResult.GetCacheAddressResult
 import cl.neoxcore.saifu.presentation.address.AddressResult.SaveAddressResult
 import cl.neoxcore.saifu.presentation.address.AddressUiState.DefaultUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.DisplayAddressUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.ErrorGenerateUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.ErrorSaveUiState
+import cl.neoxcore.saifu.presentation.address.AddressUiState.InitializedUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.LoadingUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.SaveUiState
 import cl.neoxcore.saifu.presentation.mvi.UnsupportedReduceException
@@ -16,8 +18,18 @@ class AddressReducerTest {
     private val reducer = AddressReducer()
 
     @Test
-    fun `given DefaultUiState with GenerateAddressResult-InProgress, when reduceWith, then returns LoadingUiState`() {
+    fun `given DefaultUiState with GetCacheAddressResult-InProgress, when reduceWith, then returns LoadingUiState`() {
         val previousUiState = DefaultUiState
+        val result = GetCacheAddressResult.InProgress
+
+        val newUiState = with(reducer) { previousUiState reduceWith result }
+
+        assert(newUiState is LoadingUiState)
+    }
+
+    @Test
+    fun `given InitializedUiState with GenerateAddress-InProgress, when reduceWith, then returns LoadingUiState`() {
+        val previousUiState = InitializedUiState
         val result = GenerateAddressResult.InProgress
 
         val newUiState = with(reducer) { previousUiState reduceWith result }
@@ -26,8 +38,8 @@ class AddressReducerTest {
     }
 
     @Test
-    fun `given DefaultUiState with SaveAddressResult-InProgress, when reduceWith, then returns LoadingUiState`() {
-        val previousUiState = DefaultUiState
+    fun `given InitializedUiState with SaveAddressResult-InProgress, when reduceWith, then returns LoadingUiState`() {
+        val previousUiState = InitializedUiState
         val result = SaveAddressResult.InProgress
 
         val newUiState = with(reducer) { previousUiState reduceWith result }
@@ -41,6 +53,26 @@ class AddressReducerTest {
         val result = SaveAddressResult.Success
 
         with(reducer) { previousUiState reduceWith result }
+    }
+
+    @Test
+    fun `given LoadingUiState with GetCacheAddress and address, when reduceWith, then returns SaveUiState`() {
+        val previousUiState = LoadingUiState
+        val result = GetCacheAddressResult.Success(randomString())
+
+        val newUiState = with(reducer) { previousUiState reduceWith result }
+
+        assert(newUiState is SaveUiState)
+    }
+
+    @Test
+    fun `given LoadingUiState with GetCacheAddress and no-address, when reduceWith, then returns InitializedUiState`() {
+        val previousUiState = LoadingUiState
+        val result = GetCacheAddressResult.Success("")
+
+        val newUiState = with(reducer) { previousUiState reduceWith result }
+
+        assert(newUiState is InitializedUiState)
     }
 
     @Test

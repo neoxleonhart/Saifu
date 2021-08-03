@@ -1,6 +1,7 @@
 package cl.neoxcore.saifu.presentation.address
 
 import cl.neoxcore.saifu.domain.GenerateAddressUseCase
+import cl.neoxcore.saifu.domain.GetCacheAddressUseCase
 import cl.neoxcore.saifu.domain.SaveAddressUseCase
 import cl.neoxcore.saifu.factory.BaseFactory.randomString
 import cl.neoxcore.saifu.presentation.address.AddressResult.GenerateAddressResult
@@ -21,12 +22,14 @@ import org.junit.Test
 class AddressProcessorTest {
     private val generateUseCase = mockk<GenerateAddressUseCase>()
     private val saveUseCase = mockk<SaveAddressUseCase>()
+    private val getCacheAddressUseCase = mockk<GetCacheAddressUseCase>()
     private val executionThread = ExecutionThreadFactory.makeExecutionThread(
         ExecutionThreadEnvironment.TESTING
     )
     private val processor = AddressProcessor(
         generateAddressUseCase = generateUseCase,
         saveAddressUseCase = saveUseCase,
+        getCacheAddressUseCase = getCacheAddressUseCase,
         executionThread = executionThread
     )
 

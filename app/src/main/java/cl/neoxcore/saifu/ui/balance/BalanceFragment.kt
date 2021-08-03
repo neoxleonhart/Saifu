@@ -166,6 +166,7 @@ internal class BalanceFragment : Fragment(), MviUi<BalanceUIntent, BalanceUiStat
 
     private fun hideLoading() {
         binding?.loadingView?.isGone = true
+        binding?.contentView?.isGone = false
     }
 
     override fun onDestroy() {

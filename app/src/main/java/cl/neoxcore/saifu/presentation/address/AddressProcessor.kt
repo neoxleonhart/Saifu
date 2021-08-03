@@ -1,10 +1,13 @@
 package cl.neoxcore.saifu.presentation.address
 
 import cl.neoxcore.saifu.domain.GenerateAddressUseCase
+import cl.neoxcore.saifu.domain.GetCacheAddressUseCase
 import cl.neoxcore.saifu.domain.SaveAddressUseCase
 import cl.neoxcore.saifu.presentation.address.AddressAction.GenerateAddressAction
+import cl.neoxcore.saifu.presentation.address.AddressAction.GetCacheAddressAction
 import cl.neoxcore.saifu.presentation.address.AddressAction.SaveAddressAction
 import cl.neoxcore.saifu.presentation.address.AddressResult.GenerateAddressResult
+import cl.neoxcore.saifu.presentation.address.AddressResult.GetCacheAddressResult
 import cl.neoxcore.saifu.presentation.address.AddressResult.SaveAddressResult
 import cl.neoxcore.saifu.presentation.mvi.execution.ExecutionThread
 import kotlinx.coroutines.flow.Flow
@@ -18,11 +21,13 @@ import javax.inject.Inject
 class AddressProcessor @Inject constructor(
     private val generateAddressUseCase: GenerateAddressUseCase,
     private val saveAddressUseCase: SaveAddressUseCase,
+    private val getCacheAddressUseCase: GetCacheAddressUseCase,
     private val executionThread: ExecutionThread
 ) {
     fun actionProcessor(action: AddressAction): Flow<AddressResult> = when (action) {
         GenerateAddressAction -> generateAddressProcessor()
         is SaveAddressAction -> saveAddressProcessor(action.address)
+        GetCacheAddressAction -> getCacheAddressProcessor()
     }
 
     @Suppress("USELESS_CAST")
@@ -44,4 +49,15 @@ class AddressProcessor @Inject constructor(
     }.catch {
         emit(SaveAddressResult.Error(it))
     }.flowOn(executionThread.ioThread())
+
+    @Suppress("USELESS_CAST")
+    private fun getCacheAddressProcessor(): Flow<AddressResult> =
+        getCacheAddressUseCase.execute()
+            .map {
+                GetCacheAddressResult.Success(it) as GetCacheAddressResult
+            }.onStart {
+                emit(GetCacheAddressResult.InProgress)
+            }.catch {
+                emit(GetCacheAddressResult.Error(it))
+            }.flowOn(executionThread.ioThread())
 }

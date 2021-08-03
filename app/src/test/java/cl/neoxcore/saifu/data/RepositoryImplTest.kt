@@ -72,6 +72,18 @@ class RepositoryImplTest {
         }
     }
 
+    @Test
+    fun `given Address, when getCachedAddress, then return data`() = runBlocking {
+        val address = randomString()
+        stubCacheGetAddress(address)
+
+        val flow = repository.getCachedAddress()
+
+        flow.collect {
+            assertEquals(address, it)
+        }
+    }
+
     private fun stubRemoteGenerateAddress(remoteAddress: RemoteAddress) {
         coEvery { remote.generateAddress() } returns remoteAddress
     }

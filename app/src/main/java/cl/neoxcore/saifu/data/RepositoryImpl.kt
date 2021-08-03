@@ -24,6 +24,10 @@ class RepositoryImpl @Inject constructor(
         cache.storeCacheAddress(address)
     }
 
+    override fun getCachedAddress(): Flow<String> {
+        return cache.getCacheAddress()
+    }
+
     override fun getBalance(): Flow<Balance> = flow {
         cache.getCacheAddress().collect {
             val balance = remote.getBalance(it)

@@ -14,4 +14,10 @@ sealed class AddressResult : MviResult {
         object Success : SaveAddressResult()
         data class Error(val error: Throwable) : SaveAddressResult()
     }
+
+    sealed class GetCacheAddressResult : AddressResult() {
+        object InProgress : GetCacheAddressResult()
+        data class Success(val address: String) : GetCacheAddressResult()
+        data class Error(val error: Throwable) : GetCacheAddressResult()
+    }
 }

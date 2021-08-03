@@ -3,11 +3,13 @@ package cl.neoxcore.saifu.presentation
 import androidx.lifecycle.ViewModel
 import cl.neoxcore.saifu.presentation.address.AddressAction
 import cl.neoxcore.saifu.presentation.address.AddressAction.GenerateAddressAction
+import cl.neoxcore.saifu.presentation.address.AddressAction.GetCacheAddressAction
 import cl.neoxcore.saifu.presentation.address.AddressAction.SaveAddressAction
 import cl.neoxcore.saifu.presentation.address.AddressProcessor
 import cl.neoxcore.saifu.presentation.address.AddressReducer
 import cl.neoxcore.saifu.presentation.address.AddressUIntent
 import cl.neoxcore.saifu.presentation.address.AddressUIntent.GenerateNewAddressUIntent
+import cl.neoxcore.saifu.presentation.address.AddressUIntent.GetAddressSavedUIntent
 import cl.neoxcore.saifu.presentation.address.AddressUIntent.SaveAddressUIntent
 import cl.neoxcore.saifu.presentation.address.AddressUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.DefaultUiState
@@ -44,6 +46,7 @@ class AddressViewModel @Inject constructor(
         return when (this) {
             GenerateNewAddressUIntent -> GenerateAddressAction
             is SaveAddressUIntent -> SaveAddressAction(address)
+            GetAddressSavedUIntent -> GetCacheAddressAction
         }
     }
 }

@@ -9,4 +9,9 @@
     <string name="unconfirmed_balance">Saldo sin confirmar:</string>
     <string name="final_balance">Balance + Saldo sin confirmar:</string>
     <string name="error_update">Error al actualizar en servidor</string>
+    <string name="confirm_title">Guardar address</string>
+    <string name="confirm_text">¿Esta seguro de querer guardar esta address?</string>
+    <string name="accept">Aceptar</string>
+    <string name="cancel">Cancelar</string>
+
 </resources>

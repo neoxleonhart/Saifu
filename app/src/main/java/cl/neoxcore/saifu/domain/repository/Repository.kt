@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface Repository {
     fun generateAddress(): Flow<String>
     suspend fun saveAddress(address: String)
+    fun getCachedAddress(): Flow<String>
     fun getBalance(): Flow<Balance>
     fun getCachedBalance(): Flow<Balance>
 }
