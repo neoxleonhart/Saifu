@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import cl.neoxcore.saifu.Constants.DELAY_TIME
 import cl.neoxcore.saifu.R.string
 import cl.neoxcore.saifu.databinding.FragmentBalanceBinding
 import cl.neoxcore.saifu.presentation.BalanceViewModel
@@ -31,12 +32,11 @@ import com.google.zxing.qrcode.QRCodeWriter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -79,6 +79,9 @@ internal class BalanceFragment : Fragment(), MviUi<BalanceUIntent, BalanceUiStat
                 navigator.goToTransactions(root)
             }
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            userIntents.emit(LoadBalanceUIntent)
+        }
     }
 
     private fun subscribeToProcessIntentsAndObserveStates() {
@@ -88,14 +91,7 @@ internal class BalanceFragment : Fragment(), MviUi<BalanceUIntent, BalanceUiStat
         }
     }
 
-    override fun userIntents(): Flow<BalanceUIntent> = merge(
-        initialUserIntent(),
-        userIntents.asSharedFlow()
-    )
-
-    private fun initialUserIntent(): Flow<BalanceUIntent> = flow {
-        emit(LoadBalanceUIntent)
-    }
+    override fun userIntents(): Flow<BalanceUIntent> = userIntents.asSharedFlow()
 
     override fun renderUiStates(uiState: BalanceUiState) {
         when (uiState) {
@@ -115,10 +111,11 @@ internal class BalanceFragment : Fragment(), MviUi<BalanceUIntent, BalanceUiStat
     }
 
     private fun showError(error: Throwable) {
+        error.printStackTrace()
         binding?.apply {
             Snackbar.make(
                 contentView,
-                "Error Critico: ${error.localizedMessage}",
+                getString(string.server_error),
                 Snackbar.LENGTH_INDEFINITE
             ).setAction(string.retry) {
                 viewLifecycleOwner.lifecycleScope.launch {
@@ -138,6 +135,10 @@ internal class BalanceFragment : Fragment(), MviUi<BalanceUIntent, BalanceUiStat
             addressImage.setImageBitmap(generateQr(balance.address))
         }
         hideLoading()
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(DELAY_TIME)
+            userIntents.emit(LoadBalanceUIntent)
+        }
     }
 
     private fun showErrorWithBalance(balance: UiBalance) {
@@ -150,12 +151,12 @@ internal class BalanceFragment : Fragment(), MviUi<BalanceUIntent, BalanceUiStat
             Snackbar.make(
                 contentView,
                 getString(string.error_update),
-                Snackbar.LENGTH_INDEFINITE
-            ).setAction(string.retry) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    userIntents.emit(LoadBalanceUIntent)
-                }
-            }.show()
+                Snackbar.LENGTH_SHORT
+            ).show()
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(DELAY_TIME)
+            userIntents.emit(LoadBalanceUIntent)
         }
         hideLoading()
     }

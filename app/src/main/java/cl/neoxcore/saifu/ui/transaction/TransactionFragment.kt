@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import cl.neoxcore.saifu.Constants
 import cl.neoxcore.saifu.R.string
 import cl.neoxcore.saifu.databinding.FragmentTransactionBinding
 import cl.neoxcore.saifu.presentation.TransactionViewModel
@@ -26,12 +27,11 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -65,12 +65,15 @@ internal class TransactionFragment : Fragment(), MviUi<TransactionUIntent, Trans
         if (binding == null) {
             binding = FragmentTransactionBinding.inflate(inflater, container, false)
         }
+        binding?.recyclerView?.adapter = adapter
         return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding?.recyclerView?.adapter = adapter
+        viewLifecycleOwner.lifecycleScope.launch {
+            userIntents.emit(LoadTransactionUIntent)
+        }
     }
 
     private fun subscribeToProcessIntentsAndObserveStates() {
@@ -80,14 +83,7 @@ internal class TransactionFragment : Fragment(), MviUi<TransactionUIntent, Trans
         }
     }
 
-    override fun userIntents(): Flow<TransactionUIntent> = merge(
-        initialUserIntent(),
-        userIntents.asSharedFlow()
-    )
-
-    private fun initialUserIntent(): Flow<TransactionUIntent> = flow {
-        emit(LoadTransactionUIntent)
-    }
+    override fun userIntents(): Flow<TransactionUIntent> = userIntents.asSharedFlow()
 
     override fun renderUiStates(uiState: TransactionUiState) {
         when (uiState) {
@@ -107,10 +103,11 @@ internal class TransactionFragment : Fragment(), MviUi<TransactionUIntent, Trans
     }
 
     private fun showError(error: Throwable) {
+        error.printStackTrace()
         binding?.apply {
             Snackbar.make(
                 root.rootView,
-                "Error Critico: ${error.localizedMessage}",
+                getString(string.server_error),
                 Snackbar.LENGTH_INDEFINITE
             ).setAction(string.retry) {
                 viewLifecycleOwner.lifecycleScope.launch {
@@ -123,21 +120,25 @@ internal class TransactionFragment : Fragment(), MviUi<TransactionUIntent, Trans
 
     private fun showTransactions(transactions: List<UiTransaction>) {
         adapter.addTransactions(transactions)
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(Constants.DELAY_TIME)
+            userIntents.emit(LoadTransactionUIntent)
+        }
         hideLoading()
     }
 
     private fun showErrorWithTransactions(transactions: List<UiTransaction>) {
         adapter.addTransactions(transactions)
-        binding?.root?.rootView?.let {
+        binding?.apply {
             Snackbar.make(
-                it,
+                contentView,
                 getString(string.error_update),
-                Snackbar.LENGTH_INDEFINITE
-            ).setAction(string.retry) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    userIntents.emit(LoadTransactionUIntent)
-                }
-            }.show()
+                Snackbar.LENGTH_SHORT
+            ).show()
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(Constants.DELAY_TIME)
+            userIntents.emit(LoadTransactionUIntent)
         }
         hideLoading()
     }

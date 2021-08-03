@@ -14,5 +14,6 @@
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
     <string name="transaction_btn">Ver transacciones</string>
+    <string name="server_error">Error al conectar al servidor</string>
 
 </resources>

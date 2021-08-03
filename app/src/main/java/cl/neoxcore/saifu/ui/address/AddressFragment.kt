@@ -10,7 +10,7 @@ import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import cl.neoxcore.saifu.R
+import cl.neoxcore.saifu.R.string
 import cl.neoxcore.saifu.databinding.FragmentAddressBinding
 import cl.neoxcore.saifu.presentation.AddressViewModel
 import cl.neoxcore.saifu.presentation.address.AddressUIntent
@@ -135,14 +135,15 @@ class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
     }
 
     private fun showGenerateError(error: Throwable) {
+        error.printStackTrace()
         binding?.apply {
             saveAddressButton.isEnabled = addressText.text.toString().isNotEmpty()
             hideLoading()
             Snackbar.make(
                 contentView,
-                "Error: ${error.localizedMessage}",
+                getString(string.server_error),
                 Snackbar.LENGTH_INDEFINITE
-            ).setAction(R.string.retry) {
+            ).setAction(string.retry) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     userIntents.emit(GenerateNewAddressUIntent)
                 }
@@ -157,7 +158,7 @@ class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
                 contentView,
                 "Error: ${error.localizedMessage}",
                 Snackbar.LENGTH_INDEFINITE
-            ).setAction(R.string.retry) {
+            ).setAction(string.retry) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     userIntents.emit(SaveAddressUIntent(addressText.text.toString()))
                 }
@@ -198,11 +199,11 @@ class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
     private fun showConfirmDialog() {
         context?.let {
             MaterialAlertDialogBuilder(it)
-                .setTitle(resources.getString(R.string.confirm_title))
-                .setMessage(resources.getString(R.string.confirm_text))
-                .setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
+                .setTitle(resources.getString(string.confirm_title))
+                .setMessage(resources.getString(string.confirm_text))
+                .setNegativeButton(resources.getString(string.cancel)) { _, _ ->
                 }
-                .setPositiveButton(resources.getString(R.string.accept)) { _, _ ->
+                .setPositiveButton(resources.getString(string.accept)) { _, _ ->
                     viewLifecycleOwner.lifecycleScope.launch {
                         userIntents.emit(SaveAddressUIntent(binding?.addressText?.text.toString()))
                     }
