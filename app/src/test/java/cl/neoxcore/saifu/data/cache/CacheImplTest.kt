@@ -1,9 +1,12 @@
 package cl.neoxcore.saifu.data.cache
 
+import cl.neoxcore.saifu.data.cache.database.DatabaseBuilder
 import cl.neoxcore.saifu.data.cache.model.CacheBalance
+import cl.neoxcore.saifu.data.cache.model.CacheTransaction
 import cl.neoxcore.saifu.data.cache.preferences.CachePreferences
 import cl.neoxcore.saifu.factory.BalanceFactory.makeCacheBalance
 import cl.neoxcore.saifu.factory.BaseFactory.randomString
+import cl.neoxcore.saifu.factory.TransactionFactory.makeCacheTransactionList
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.collect
@@ -15,7 +18,8 @@ import org.junit.Test
 
 class CacheImplTest {
     private val preferences = mockk<CachePreferences>()
-    private val cache = CacheImpl(preferences)
+    private val databaseBuilder = mockk<DatabaseBuilder>()
+    private val cache = CacheImpl(preferences, databaseBuilder)
 
     @Test
     fun `given String, when getCacheAddress, then return data `() = runBlocking {
@@ -45,5 +49,18 @@ class CacheImplTest {
 
     private fun stubGetCacheBalance(cacheBalance: CacheBalance) {
         coEvery { preferences.getCacheBalance.take(1) } returns flow { emit(cacheBalance) }
+    }
+
+    @Test
+    fun `given CacheTransactionList, when getCacheTransactions, then return data `() = runBlocking {
+        val cacheTransactionList = makeCacheTransactionList(3)
+        stubGetCacheTransactions(cacheTransactionList)
+
+        val result = databaseBuilder.transactionDao().getAll()
+        assertEquals(cacheTransactionList, result)
+    }
+
+    private fun stubGetCacheTransactions(cacheBalance: List<CacheTransaction>) {
+        coEvery { databaseBuilder.transactionDao().getAll() } returns cacheBalance
     }
 }
