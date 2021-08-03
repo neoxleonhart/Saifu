@@ -9,7 +9,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class GetBalanceUseCaseTest {
@@ -24,7 +24,7 @@ class GetBalanceUseCaseTest {
         val flow = useCase.execute()
 
         flow.collect { result ->
-            Assert.assertEquals(balance, result)
+            assertEquals(balance, result)
         }
         coVerify { repository.getBalance() }
     }

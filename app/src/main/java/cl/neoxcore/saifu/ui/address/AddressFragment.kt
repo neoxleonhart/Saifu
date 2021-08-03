@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +23,7 @@ import cl.neoxcore.saifu.presentation.address.AddressUiState.ErrorSaveUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.LoadingUiState
 import cl.neoxcore.saifu.presentation.address.AddressUiState.SaveUiState
 import cl.neoxcore.saifu.presentation.mvi.MviUi
+import cl.neoxcore.saifu.ui.navigator.Navigator
 import com.google.android.material.snackbar.Snackbar
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @FlowPreview
@@ -43,6 +44,9 @@ import kotlinx.coroutines.launch
 @Suppress("TooManyFunctions")
 class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
     private var binding: FragmentAddressBinding? = null
+
+    @Inject
+    lateinit var navigator: Navigator
 
     private val viewModel by viewModels<AddressViewModel>()
 
@@ -102,7 +106,9 @@ class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
     }
 
     private fun goToNextScreen() {
-        Toast.makeText(context, "nueva pantalla", Toast.LENGTH_SHORT).show()
+        binding?.let {
+            navigator.goToCharacterList(it.root)
+        }
     }
 
     private fun showLoading() {
@@ -121,7 +127,7 @@ class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
                 Snackbar.LENGTH_INDEFINITE
             ).setAction(R.string.retry) {
                 viewLifecycleOwner.lifecycleScope.launch {
-                        userIntents.emit(GenerateNewAddressUIntent)
+                    userIntents.emit(GenerateNewAddressUIntent)
                 }
             }.show()
         }
@@ -136,7 +142,7 @@ class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
                 Snackbar.LENGTH_INDEFINITE
             ).setAction(R.string.retry) {
                 viewLifecycleOwner.lifecycleScope.launch {
-                        userIntents.emit(SaveAddressUIntent(addressText.text.toString()))
+                    userIntents.emit(SaveAddressUIntent(addressText.text.toString()))
                 }
             }.show()
         }

@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">Saifu</string>
     <string name="address_title">Address</string>
+    <string name="balance_title">Balance</string>
     <string name="generate_address_btn">Generar nueva address</string>
     <string name="save_btn">Guardar y continuar</string>
     <string name="qr_code">Código QR</string>
     <string name="retry">Reintentar</string>
+    <string name="unconfirmed_balance">Saldo sin confirmar:</string>
+    <string name="final_balance">Balance + Saldo sin confirmar:</string>
+    <string name="error_update">Error al actualizar en servidor</string>
 </resources>

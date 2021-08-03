@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/proyectos/android/saifu/app/src/main/res/layout/activity_main.xml" value="0.13020833333333334" />
         <entry key="..\:/proyectos/android/saifu/app/src/main/res/layout/fragment_address.xml" value="0.16129032258064516" />
+        <entry key="..\:/proyectos/android/saifu/app/src/main/res/layout/fragment_balance.xml" value="0.1" />
       </map>
     </option>
   </component>
@@ -13,5 +14,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.335" />
+      </ProjectState>
+    </option>
   </component>
 </project>

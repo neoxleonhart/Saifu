@@ -9,6 +9,18 @@
         android:id="@+id/addressFragment"
         android:name="cl.neoxcore.saifu.ui.address.AddressFragment"
         android:label="Address"
-        tools:layout="@layout/fragment_address" />
+        tools:layout="@layout/fragment_address" >
+        <action
+            android:id="@+id/from_address_to_balance"
+            app:destination="@id/balanceFragment"
+            app:popUpTo="@+id/addressFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/balanceFragment"
+        android:name="cl.neoxcore.saifu.ui.balance.BalanceFragment"
+        android:label="Balance"
+        tools:layout="@layout/fragment_balance" />
 
 </navigation>
