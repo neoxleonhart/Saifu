@@ -21,6 +21,17 @@
         android:id="@+id/balanceFragment"
         android:name="cl.neoxcore.saifu.ui.balance.BalanceFragment"
         android:label="Balance"
-        tools:layout="@layout/fragment_balance" />
+        tools:layout="@layout/fragment_balance" >
+        <action
+            android:id="@+id/from_balance_to_transactions"
+            app:destination="@id/transactionFragment"
+         />
+    </fragment>
+
+    <fragment
+        android:id="@+id/transactionFragment"
+        android:name="cl.neoxcore.saifu.ui.transaction.TransactionFragment"
+        android:label="Transacciones"
+        tools:layout="@layout/fragment_transaction" />
 
 </navigation>

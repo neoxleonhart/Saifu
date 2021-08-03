@@ -3,7 +3,6 @@ package cl.neoxcore.saifu.ui
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -13,9 +12,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var binding: ActivityMainBinding? = null
+    private var navHostFragment = NavHostFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,16 +22,39 @@ class MainActivity : AppCompatActivity() {
             binding = ActivityMainBinding.inflate(layoutInflater)
         }
         setContentView(binding?.root)
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.saifu_nav_fragment) as NavHostFragment
-        navController = navHostFragment.navController
         setupNavigation()
+        destinationManager()
     }
 
     private fun setupNavigation() {
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setSupportActionBar(binding?.toolbar)
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.saifu_nav_fragment) as NavHostFragment
+        val navGraph = navHostFragment.navController.graph
+        navHostFragment.navController.setGraph(navGraph, intent.extras)
+        appBarConfiguration = AppBarConfiguration
+            .Builder(
+                R.id.balanceFragment,
+                R.id.transactionFragment
+            )
+            .build()
+        setupActionBarWithNavController(navHostFragment.navController, appBarConfiguration)
+    }
+
+    private fun destinationManager() {
+        navHostFragment.navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.transactionFragment -> {
+                    supportActionBar?.apply {
+                        setDisplayHomeAsUpEnabled(true)
+                        setDisplayShowHomeEnabled(true)
+                        show()
+                    }
+                }
+                else -> {
+                    supportActionBar?.show()
+                }
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

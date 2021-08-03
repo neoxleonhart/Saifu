@@ -13,5 +13,6 @@
     <string name="confirm_text">¿Esta seguro de querer guardar esta address?</string>
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
+    <string name="transaction_btn">Ver transacciones</string>
 
 </resources>

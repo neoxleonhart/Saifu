@@ -24,6 +24,7 @@ import cl.neoxcore.saifu.presentation.balance.BalanceUiState.LoadingUiState
 import cl.neoxcore.saifu.presentation.model.UiBalance
 import cl.neoxcore.saifu.presentation.mvi.MviUi
 import cl.neoxcore.saifu.ui.address.AddressFragment
+import cl.neoxcore.saifu.ui.navigator.Navigator
 import com.google.android.material.snackbar.Snackbar
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
@@ -38,6 +39,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @FlowPreview
@@ -45,6 +47,9 @@ import kotlinx.coroutines.launch
 @Suppress("TooManyFunctions")
 internal class BalanceFragment : Fragment(), MviUi<BalanceUIntent, BalanceUiState> {
     private var binding: FragmentBalanceBinding? = null
+
+    @Inject
+    lateinit var navigator: Navigator
 
     private val viewModel by viewModels<BalanceViewModel>()
 
@@ -65,6 +70,15 @@ internal class BalanceFragment : Fragment(), MviUi<BalanceUIntent, BalanceUiStat
             binding = FragmentBalanceBinding.inflate(inflater, container, false)
         }
         return binding?.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding?.apply {
+            transactionButton.setOnClickListener {
+                navigator.goToTransactions(root)
+            }
+        }
     }
 
     private fun subscribeToProcessIntentsAndObserveStates() {

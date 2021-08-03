@@ -10,6 +10,7 @@ import cl.neoxcore.saifu.presentation.transaction.TransactionUIntent
 import cl.neoxcore.saifu.presentation.transaction.TransactionUIntent.LoadTransactionUIntent
 import cl.neoxcore.saifu.presentation.transaction.TransactionUiState
 import cl.neoxcore.saifu.presentation.transaction.TransactionUiState.DefaultUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -20,6 +21,7 @@ import javax.inject.Inject
 
 @FlowPreview
 @ExperimentalCoroutinesApi
+@HiltViewModel
 internal class TransactionViewModel @Inject constructor(
     private val reducer: TransactionReducer,
     private val processor: TransactionProcessor

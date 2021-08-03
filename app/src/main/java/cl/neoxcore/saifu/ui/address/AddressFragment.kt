@@ -119,7 +119,7 @@ class AddressFragment : Fragment(), MviUi<AddressUIntent, AddressUiState> {
 
     private fun goToNextScreen() {
         binding?.let {
-            navigator.goToCharacterList(it.root)
+            navigator.goToAddress(it.root)
         }
     }
 
