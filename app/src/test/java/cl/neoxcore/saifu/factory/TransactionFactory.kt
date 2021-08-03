@@ -6,6 +6,7 @@ import cl.neoxcore.saifu.data.remote.model.RemoteTransaction
 import cl.neoxcore.saifu.domain.model.Transaction
 import cl.neoxcore.saifu.factory.BaseFactory.randomLong
 import cl.neoxcore.saifu.factory.BaseFactory.randomString
+import cl.neoxcore.saifu.presentation.model.UiTransaction
 
 object TransactionFactory {
     fun makeRemoteFullAddress(count: Int) = RemoteFullAddress(
@@ -37,6 +38,16 @@ object TransactionFactory {
     }
 
     private fun makeTransaction() = Transaction(
+        id = randomString(),
+        date = randomString(),
+        total = randomLong()
+    )
+
+    fun makeUiTransactionList(count: Int): List<UiTransaction> {
+        return (0..count).map { makeUiTransaction() }
+    }
+
+    private fun makeUiTransaction() = UiTransaction(
         id = randomString(),
         date = randomString(),
         total = randomLong()
